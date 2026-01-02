@@ -3,6 +3,7 @@ import authRoutes from "./routes/authRoutes.js";
 import errorHandler from "./middlewares/errorMiddleware.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import departmentRoutes from "./routes/departmentRoutes.js";
+import courseRoutes from "./routes/courseRoutes.js";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/departments", departmentRoutes);
+app.use("/api/courses", courseRoutes);
 
 app.use(errorHandler);
 
