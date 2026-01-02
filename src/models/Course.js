@@ -13,16 +13,10 @@ const courseSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
-    credits: {
+    durationInMonths: {
       type: Number,
       required: true,
-      min: 1,
-    },
-    semester: {
-      type: Number,
-      required: true,
-      min: 1,
-      max: 8,
+      enum: [6],
     },
     department: {
       type: mongoose.Schema.Types.ObjectId,

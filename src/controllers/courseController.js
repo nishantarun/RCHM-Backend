@@ -1,9 +1,9 @@
 import Course from "../models/Course.js";
 
 export const createCourse = async (req, res, next) => {
-  const { name, code, credits, semester, department } = req.body;
+  const { name, code, durationInMonths, department } = req.body;
 
-  if (!name || !code || !credits || !semester || !department) {
+  if (!name || !code || !durationInMonths || !department) {
     res.status(400);
     return next(new Error("All fields are required"));
   }
@@ -11,8 +11,7 @@ export const createCourse = async (req, res, next) => {
   const course = await Course.create({
     name,
     code,
-    credits,
-    semester,
+    durationInMonths,
     department,
     createdBy: req.user.id,
   });
@@ -32,7 +31,7 @@ export const getCourses = async (req, res) => {
 
   const courses = await Course.find(filter)
     .populate("department", "name code")
-    .sort("semester");
+    .sort("createdAt");
 
   res.json({
     success: true,
