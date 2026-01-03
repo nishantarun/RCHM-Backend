@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Student from "../models/Student.js";
 import User from "../models/User.js";
 import Batch from "../models/Batch.js";
@@ -10,31 +11,70 @@ export const createStudent = async (req, res, next) => {
     return next(new Error("All fields are required"));
   }
 
-  const user = await User.findById(userId);
-  if (!user) {
-    res.status(404);
-    return next(new Error("User not found"));
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const user = await User.findById(userId).session(session);
+    if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+    }
+
+    if (user.role !== "student") {
+      res.status(400);
+      throw new Error("User role is not student");
+    }
+
+    const existingStudent = await Student.findOne({ user: userId }).session(
+      session
+    );
+    if (existingStudent) {
+      res.status(409);
+      throw new Error("Student already enrolled");
+    }
+
+    const existingBatch = await Batch.findById(batch).session(session);
+    if (!existingBatch) {
+      res.status(404);
+      throw new Error("Batch not found");
+    }
+
+    if (!existingBatch.isActive) {
+      res.status(400);
+      throw new Error("Batch is not active");
+    }
+
+    const enrolledCount = await Student.countDocuments({ batch }).session(
+      session
+    );
+
+    if (enrolledCount >= existingBatch.capacity) {
+      res.status(400);
+      throw new Error("Batch capacity reached");
+    }
+
+    const student = await Student.create(
+      [
+        {
+          user: userId,
+          rollNumber,
+          batch,
+        },
+      ],
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({
+      success: true,
+      data: student[0],
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    next(error);
   }
-
-  if (user.role !== "student") {
-    res.status(400);
-    return next(new Error("User role is not student"));
-  }
-
-  const existingBatch = await Batch.findById(batch);
-  if (!existingBatch) {
-    res.status(404);
-    return next(new Error("Batch not found"));
-  }
-
-  const student = await Student.create({
-    user: userId,
-    rollNumber,
-    batch,
-  });
-
-  res.status(201).json({
-    success: true,
-    data: student,
-  });
 };
