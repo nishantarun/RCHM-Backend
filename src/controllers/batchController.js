@@ -1,5 +1,6 @@
 import Batch from "../models/Batch.js";
 import Course from "../models/Course.js";
+import Student from "../models/Student.js";
 
 export const createBatch = async (req, res, next) => {
   const { name, course, startDate, endDate, capacity } = req.body;
@@ -45,5 +46,17 @@ export const getBatches = async (req, res) => {
     success: true,
     count: batches.length,
     data: batches,
+  });
+};
+
+export const getStudentsByBatch = async (req, res) => {
+  const students = await Student.find({ batch: req.params.id })
+    .populate("user", "name email")
+    .sort("createdAt");
+
+  res.json({
+    success: true,
+    count: students.length,
+    data: students,
   });
 };

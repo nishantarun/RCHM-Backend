@@ -1,5 +1,9 @@
 import express from "express";
-import { createBatch, getBatches } from "../controllers/batchController.js";
+import {
+  createBatch,
+  getBatches,
+  getStudentsByBatch,
+} from "../controllers/batchController.js";
 
 import protect from "../middlewares/authMiddleware.js";
 import authorize from "../middlewares/authorizeMiddleware.js";
@@ -10,5 +14,6 @@ router.use(authorize("admin"));
 
 router.post("/", createBatch);
 router.get("/", getBatches);
+router.get("/:id/students", getStudentsByBatch);
 
 export default router;

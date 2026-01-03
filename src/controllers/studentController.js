@@ -78,3 +78,23 @@ export const createStudent = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getMyStudentProfile = async (req, res) => {
+  const student = await Student.findOne({ user: req.user.id }).populate({
+    path: "batch",
+    populate: {
+      path: "course",
+      select: "name durationInMonths",
+    },
+  });
+
+  if (!student) {
+    res.status(404);
+    return next(new Error("Student profile not found"));
+  }
+
+  res.json({
+    success: true,
+    data: student,
+  });
+};
