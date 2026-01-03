@@ -5,6 +5,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import departmentRoutes from "./routes/departmentRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import batchRoutes from "./routes/batchRoutes.js";
+import studentRoutes from "./routes/studentRoutes.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/batches", batchRoutes);
+app.use("/api/students", studentRoutes);
 
 app.use(errorHandler);
 
