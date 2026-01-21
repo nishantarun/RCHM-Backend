@@ -10,9 +10,8 @@ import authorize from "../middlewares/authorizeMiddleware.js";
 const router = express.Router();
 
 router.use(protect);
-router.use(authorize("admin"));
 
-router.post("/", createStudent);
+router.post("/", protect, authorize("admin"), createStudent);
 router.get("/me", protect, getMyStudentProfile);
 
 export default router;

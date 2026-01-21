@@ -79,7 +79,7 @@ export const createStudent = async (req, res, next) => {
   }
 };
 
-export const getMyStudentProfile = async (req, res) => {
+export const getMyStudentProfile = async (req, res, next) => {
   const student = await Student.findOne({ user: req.user.id }).populate({
     path: "batch",
     populate: {
