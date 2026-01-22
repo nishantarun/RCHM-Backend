@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import errorHandler from "./middlewares/errorMiddleware.js";
 import adminRoutes from "./routes/adminRoutes.js";
@@ -10,6 +11,18 @@ import studentRoutes from "./routes/studentRoutes.js";
 const app = express();
 
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  }),
+);
+
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
